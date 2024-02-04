@@ -47,6 +47,23 @@ class PollSession:
                 'questions_stat': questions_stat,
                 'answers_stat': answers_stat}
 
+    def get_questions_numbers(self):
+        questions = Question.objects.filter(poll=self.poll).order_by('participants')
+        numbers = {}
+        prev_question = None
+        prev_number = 1
+        for question in questions:
+            if prev_question and question.participants == prev_question.participants:
+                numbers[question.pk] = prev_number
+            elif prev_question and question.participants != prev_question.participants:
+                numbers[question.pk] = prev_number + 1
+                prev_question = question
+                prev_number += 1
+            else:
+                numbers[question.pk] = prev_number
+                prev_question = question
+        return numbers
+
     def __update_database(self):
         self.poll.participants = F('participants') + 1
 

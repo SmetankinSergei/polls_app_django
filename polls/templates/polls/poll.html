@@ -27,8 +27,15 @@
                             <div class="statistics-message">No one has answered this question yet</div>
                         {% else %}
                             <div class="statistics-message">
-                                (answered: {{ question.participants }} /
-                                percentage respondents: {{ statistics.percentage_poll_participants }}%)
+                                Answered: {{ question.participants }} /
+                                percentage respondents: {{ statistics.percentage_poll_participants }}%
+                            </div>
+                            <div class="question-number">
+                                {% for question_id, question_data in question_numbers.items %}
+                                    {% if question_id == question_pk %}
+                                        Pop question number: {{ question_data }}
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                         {% endif %}
                     </span>

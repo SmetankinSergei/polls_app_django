@@ -42,6 +42,10 @@ def poll(request):
     if question:
         question_statistics = poll_session.session.get_question_statistics(question)
 
+    question_numbers = poll_session.session.get_questions_numbers()
+
+    print(question_numbers)
+
     context = {
         'title': 'poll',
         'poll': current_poll,
@@ -49,6 +53,8 @@ def poll(request):
         'answers': answers,
         'message': message,
         'statistics': question_statistics,
+        'question_pk': question.pk,
+        'question_numbers': question_numbers,
     }
 
     return render(request, 'polls/poll.html', context)

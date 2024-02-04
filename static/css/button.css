@@ -2,7 +2,17 @@
     display: block;
     margin: 1em auto;
     width: 80%;
-    height: 3em;
+    min-height: 3em;
     border: solid 1px #000;
     border-radius: 0.5em;
+    background-color: #252525;
+}
+
+a.button, div.button {
+    text-align: center;
+    padding-top: 1em;
+}
+
+.button:hover {
+    background-color: #606060;
 }

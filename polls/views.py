@@ -1,8 +1,7 @@
-from django.db.models import Count
-from django.db.models import Q
 from django.shortcuts import render
 
-from polls.constants import COMPLETED_SURVEY_MESSAGE
+from polls.poll_session import poll_session
+from polls.constants import COMPLETED_SURVEY_MESSAGE, NEXT_QUESTION_MESSAGE, FIRST_QUESTION_MESSAGE
 from polls.models import Poll, Question, Answer
 
 
@@ -11,17 +10,18 @@ def start_page(request):
 
 
 def poll(request):
-    is_start = request.GET.get('is_start')
-    question_pk = request.GET.get('question')
     current_poll_pk = request.GET.get('poll_pk')
     current_poll = Poll.objects.get(pk=current_poll_pk)
-    message = ''
+    create_session(current_poll)
+    session_data = handle_session_data(request)
 
-    if question_pk:
-        question = Question.objects.get(pk=question_pk)
+    if session_data['next_question_pk']:
+        message = NEXT_QUESTION_MESSAGE
+        question = Question.objects.get(pk=session_data['next_question_pk'])
         answers = Answer.objects.filter(question=question)
-    elif is_start:
-        question = Question.objects.filter(poll=current_poll_pk, is_start=True).first()
+    elif session_data['is_start']:
+        message = FIRST_QUESTION_MESSAGE
+        question = Question.objects.filter(poll=current_poll, is_start=True).first()
         answers = Answer.objects.filter(question=question)
     else:
         message = COMPLETED_SURVEY_MESSAGE
@@ -36,3 +36,17 @@ def poll(request):
         'message': message,
     }
     return render(request, 'polls/poll.html', context)
+
+
+def create_session(current_poll):
+    poll_session.session = poll_session.PollSession(current_poll)
+
+
+def handle_session_data(request):
+    session_data = {'question_pk': request.GET.get('question_pk'),
+                    'answer_pk': request.GET.get('answer_pk'),
+                    'is_start': request.GET.get('is_start'),
+                    'next_question_pk': request.GET.get('next_question'),
+                    }
+    poll_session.session.update_statistic(session_data['question_pk'], session_data['answer_pk'])
+    return session_data

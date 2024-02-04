@@ -1,3 +1,47 @@
+.main-content {
+    margin: 1em;
+    width: 98%;
+}
+
 .answer-button {
     cursor: pointer;
+}
+
+.poll-subject {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.question-block {
+    margin: 1em auto;
+    width: 85em;
+}
+
+.survey-message {
+    text-align: center;
+    color: #101010;
+    margin: 1em;
+}
+
+.question {
+    margin: 1em;
+    font-size: 1.5em;
+}
+
+.question-context {
+    color: #101010;
+}
+
+.answers-block {
+    margin: 1.5em;
+}
+
+.answers-block-label {
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+.answer-button {
+
 }

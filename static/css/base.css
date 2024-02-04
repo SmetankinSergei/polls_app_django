@@ -112,3 +112,8 @@ body {
     padding: 0.5em;
     color: #bbb7b7;
 }
+
+.block-border {
+    border: solid 1px #000;
+    border-radius: 0.5em;
+}

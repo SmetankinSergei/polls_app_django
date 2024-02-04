@@ -9,50 +9,74 @@
 {% block content %}
     <div class="correction" style="margin-top:4em;"></div>
 
-    {{ poll.subject }}<br>
-    {{ question.context }}<br>
+    <div class="main-content">
 
-    {% for answer in answers %}
-        <div class="answer-button" data-next-question="{{ answer.next_question.id }}">{{ answer.context }}</div><br>
-    {% endfor %}
+        <div class="poll-subject">{{ poll.subject }}</div>
 
-    {% if message %}
-        <div class="completed-survey-message">{{ message }}</div>
-        <a href="{% url 'polls:start_page' %}" class="button">SAVE RESULTS</a>
-    {% endif %}
+        <div class="question-block block-border">
+            {% if message %}
+                <div class="survey-message">{{ message }}</div>
+            {% endif %}
+            {% if question %}
+                <div class="question">
+                    Question: <span class="question-context">{{ question.context }}</span><br><br>
+                    <span class="statistics">
+                        (answered: {{ question.participants }} / total number of respondents: {{ poll.participants }})
+                    </span>
+                </div>
+            {% else %}
+                <a href="{% url 'polls:start_page' %}" class="send-results-button button">SEND RESULTS</a>
+            {% endif %}
 
-<a href="{% url 'polls:poll' %}?poll_pk={{ poll.pk }}&question="
-   class="next-question-button" style="display:none;">NEXT</a>
+            <div class="answers-block">
+                {% if question %}
+                    <div class="answers-block-label">Answer options:</div>
+                {% endif %}
+                {% for answer in answers %}
+                    <div class="answer-button button"
+                    data-next-question="{{ answer.next_question.id }}"
+                    data-answer-pk="{{ answer.pk }}"
+                    data-question-pk="{{ question.pk }}">{{ answer.context }}</div>
+                {% endfor %}
+            </div>
+        </div>
 
-<div class="mission-complete" style="display:none;">MISSION COMPLETE!</div>
+        <a href="{% url 'polls:poll' %}?poll_pk={{ poll.pk }}&next_question="
+           class="next-question-button" style="display:none;">NEXT</a>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var answerButtons = document.querySelectorAll('.answer-button');
-        var nextButton = document.querySelector('.next-question-button');
-        var missionComplete = document.querySelector('.mission-complete');
-        var messageElement = document.querySelector('.completed-survey-message');
+        <div class="mission-complete" style="display:none;">MISSION COMPLETE!</div>
 
-        answerButtons.forEach(function(button) {
-            button.addEventListener('click', function(event) {
-                event.preventDefault();
-                var nextQuestionId = event.target.getAttribute('data-next-question');
-                var currentUrl = nextButton.href.split('?')[0];
+    </div>
 
-                if (nextQuestionId !== null) {
-                    nextButton.href = currentUrl + '?poll_pk=' + {{ poll.pk }} + '&question=' + nextQuestionId;
-                    nextButton.textContent = 'NEXT';
-                    nextButton.style.display = 'block';
-                    missionComplete.style.display = 'none';
-                    messageElement.style.display = 'none';
-                } else {
-                    missionComplete.style.display = 'block';
-                    nextButton.style.display = 'none';
-                    messageElement.style.display = 'block';
-                }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var answerButtons = document.querySelectorAll('.answer-button');
+            var nextButton = document.querySelector('.next-question-button');
+            var missionComplete = document.querySelector('.mission-complete');
+            var messageElement = document.querySelector('.completed-survey-message');
+
+            answerButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    var nextQuestionId = event.target.getAttribute('data-next-question');
+                    var answerPk = event.target.getAttribute('data-answer-pk');
+                    var questionPk = event.target.getAttribute('data-question-pk');
+                    var currentUrl = nextButton.getAttribute('href').split('?')[0];
+
+                    if (nextQuestionId !== null) {
+                        var newUrl = currentUrl + '?poll_pk=' + {{ poll.pk }} + '&next_question=' + nextQuestionId + '&answer_pk=' + answerPk + '&question_pk=' + questionPk;
+                        nextButton.setAttribute('href', newUrl);
+                        nextButton.textContent = 'NEXT';
+                        nextButton.style.display = 'block';
+                        missionComplete.style.display = 'none';
+                        messageElement.style.display = 'none';
+                    } else {
+                        missionComplete.style.display = 'block';
+                        nextButton.style.display = 'none';
+                        messageElement.style.display = 'block';
+                    }
+                });
             });
         });
-    });
-</script>
-
+    </script>
 {% endblock %}

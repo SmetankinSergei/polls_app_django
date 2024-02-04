@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block style %}
-<link rel="stylesheet" href="{% static 'css/poll.css' %}">
 <link rel="stylesheet" href="{% static 'css/button.css' %}">
+<link rel="stylesheet" href="{% static 'css/poll.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -21,11 +21,20 @@
                 <div class="question">
                     Question: <span class="question-context">{{ question.context }}</span><br><br>
                     <span class="statistics">
-                        (answered: {{ question.participants }} / total number of respondents: {{ poll.participants }})
+                        {% if statistics.poll_participants == 0 %}
+                            <div class="statistics-message">You are the first participant in this survey</div>
+                        {% elif statistics.question_participants == 0 %}
+                            <div class="statistics-message">No one has answered this question yet</div>
+                        {% else %}
+                            <div class="statistics-message">
+                                (answered: {{ question.participants }} /
+                                percentage respondents: {{ statistics.percentage_poll_participants }}%)
+                            </div>
+                        {% endif %}
                     </span>
                 </div>
             {% else %}
-                <a href="{% url 'polls:start_page' %}" class="send-results-button button">SEND RESULTS</a>
+                <a href="{% url 'polls:start_page' %}?save=save" class="send-results-button button">SAVE RESULTS</a>
             {% endif %}
 
             <div class="answers-block">
@@ -33,50 +42,59 @@
                     <div class="answers-block-label">Answer options:</div>
                 {% endif %}
                 {% for answer in answers %}
-                    <div class="answer-button button"
-                    data-next-question="{{ answer.next_question.id }}"
-                    data-answer-pk="{{ answer.pk }}"
-                    data-question-pk="{{ question.pk }}">{{ answer.context }}</div>
+                    <div class="answer-choice">
+                        <div class="answer-button button"
+                        data-next-question="{{ answer.next_question.id }}"
+                        data-answer-pk="{{ answer.pk }}"
+                        data-question-pk="{{ question.pk }}">{{ answer.context }}</div>
+                    </div>
                 {% endfor %}
             </div>
         </div>
 
         <a href="{% url 'polls:poll' %}?poll_pk={{ poll.pk }}&next_question="
-           class="next-question-button" style="display:none;">NEXT</a>
+           class="next-question-button button" style="display:none;">NEXT</a>
 
         <div class="mission-complete" style="display:none;">MISSION COMPLETE!</div>
 
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var answerButtons = document.querySelectorAll('.answer-button');
-            var nextButton = document.querySelector('.next-question-button');
-            var missionComplete = document.querySelector('.mission-complete');
-            var messageElement = document.querySelector('.completed-survey-message');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var answersBlock = document.querySelector('.answers-block');
+    var nextButton = document.querySelector('.next-question-button');
+    var missionComplete = document.querySelector('.mission-complete');
+    var messageElement = document.querySelector('.completed-survey-message');
 
-            answerButtons.forEach(function(button) {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    var nextQuestionId = event.target.getAttribute('data-next-question');
-                    var answerPk = event.target.getAttribute('data-answer-pk');
-                    var questionPk = event.target.getAttribute('data-question-pk');
-                    var currentUrl = nextButton.getAttribute('href').split('?')[0];
+    answersBlock.addEventListener('click', function(event) {
+        var clickedButton = event.target;
 
-                    if (nextQuestionId !== null) {
-                        var newUrl = currentUrl + '?poll_pk=' + {{ poll.pk }} + '&next_question=' + nextQuestionId + '&answer_pk=' + answerPk + '&question_pk=' + questionPk;
-                        nextButton.setAttribute('href', newUrl);
-                        nextButton.textContent = 'NEXT';
-                        nextButton.style.display = 'block';
-                        missionComplete.style.display = 'none';
-                        messageElement.style.display = 'none';
-                    } else {
-                        missionComplete.style.display = 'block';
-                        nextButton.style.display = 'none';
-                        messageElement.style.display = 'block';
-                    }
-                });
+        if (clickedButton.classList.contains('answer-button')) {
+            answersBlock.querySelectorAll('.answer-button').forEach(function(button) {
+                button.classList.remove('active-answer');
             });
-        });
-    </script>
+
+            clickedButton.classList.add('active-answer');
+
+            var nextQuestionId = clickedButton.getAttribute('data-next-question');
+            var answerPk = clickedButton.getAttribute('data-answer-pk');
+            var questionPk = clickedButton.getAttribute('data-question-pk');
+            var currentUrl = nextButton.getAttribute('href').split('?')[0];
+
+            if (nextQuestionId !== null) {
+                var newUrl = currentUrl + '?poll_pk=' + {{ poll.pk }} + '&next_question=' + nextQuestionId + '&answer_pk=' + answerPk + '&question_pk=' + questionPk;
+                nextButton.setAttribute('href', newUrl);
+                nextButton.textContent = 'NEXT';
+                nextButton.style.display = 'block';
+                missionComplete.style.display = 'none';
+                messageElement.style.display = 'none';
+            } else {
+                missionComplete.style.display = 'block';
+                nextButton.style.display = 'none';
+                messageElement.style.display = 'block';
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

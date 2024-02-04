@@ -7,6 +7,14 @@
     cursor: pointer;
 }
 
+.active-answer {
+    background-color: green;
+}
+
+.active-answer:hover {
+    background-color: green;
+}
+
 .poll-subject {
     text-align: center;
     font-size: 2em;
@@ -16,6 +24,7 @@
 .question-block {
     margin: 1em auto;
     width: 85em;
+    position: relative;
 }
 
 .survey-message {
@@ -42,6 +51,19 @@
     margin-bottom: 1em;
 }
 
-.answer-button {
-
+.answer-choice {
+    display: flex;
+    justify-content:
 }
+
+.radio-button {
+    width: 2em;
+    margin-left: 1em;
+}
+
+.next-question-button {
+    position: absolute;
+    width: 10em;
+    right: 3em;
+}
+

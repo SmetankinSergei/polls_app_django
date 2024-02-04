@@ -1,4 +1,5 @@
 .button {
+    color: #bbb7b7;
     display: block;
     margin: 1em auto;
     width: 80%;
@@ -8,7 +9,7 @@
     background-color: #252525;
 }
 
-a.button, div.button {
+a.button, div.button, label {
     text-align: center;
     padding-top: 1em;
 }

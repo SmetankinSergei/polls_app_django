@@ -1,18 +1,21 @@
 from django.shortcuts import render
 
-from polls.poll_session import poll_session
 from polls.constants import COMPLETED_SURVEY_MESSAGE, NEXT_QUESTION_MESSAGE, FIRST_QUESTION_MESSAGE
 from polls.models import Poll, Question, Answer
+from polls.poll_session import poll_session
 
 
 def start_page(request):
+    if request.GET.get('save'):
+        poll_session.session.get_poll_statistics()
     return render(request, 'polls/start_page.html', {'title': 'start page'})
 
 
 def poll(request):
     current_poll_pk = request.GET.get('poll_pk')
     current_poll = Poll.objects.get(pk=current_poll_pk)
-    create_session(current_poll)
+    if request.GET.get('is_start'):
+        create_session(current_poll)
     session_data = handle_session_data(request)
 
     if session_data['next_question_pk']:
@@ -28,13 +31,19 @@ def poll(request):
         question = None
         answers = None
 
+    question_statistics = None
+    if question:
+        question_statistics = poll_session.session.get_question_statistics(question)
+
     context = {
         'title': 'poll',
         'poll': current_poll,
         'question': question,
         'answers': answers,
         'message': message,
+        'statistics': question_statistics,
     }
+
     return render(request, 'polls/poll.html', context)
 
 

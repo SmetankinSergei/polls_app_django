@@ -19,10 +19,13 @@
                     {{ question_data.question.context }} |
                     answered: {{ question_data.question.participants }} |
                     percentage respondents: {{ question_data.percentage }}%</div>
-                {% for answers in results.answers_list %}
-                    {% for answer in answers %}
-                        {% if answer.question.context == question_data.question.context %}
-                            <div class="question-stst">* {{ answer.context }} | {{ answer.participants }}</div>
+                {% for answers_list in results.answers_stat %}
+                    {% for answer in answers_list %}
+                        {% if answer.answer.question.context == question_data.question.context %}
+                            <div class="question-stst">
+                                * {{ answer.answer.context }} |
+                                answered: {{ answer.answer.participants }} |
+                                percentage respondents: {{ answer.percentage }}%</div>
                         {% endif %}
                     {% endfor %}
                 {% endfor %}

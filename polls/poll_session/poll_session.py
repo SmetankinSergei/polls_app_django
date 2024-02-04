@@ -37,16 +37,15 @@ class PollSession:
                                    'percentage': self.__get_percentage(poll.participants, question.participants)})
 
             answers = Answer.objects.filter(question=question.pk)
+            answer_list = []
             for answer in answers:
-                answers_stat.append({'answer': answer,
-                                     'percentage': self.__get_percentage(poll.participants, answer.participants)})
-
-        # answers_list = [Answer.objects.filter(question=question.pk) for question in questions]
-
+                answer_list.append({'answer': answer,
+                                    'percentage': self.__get_percentage(poll.participants, answer.participants)})
+            answers_stat.append(answer_list)
 
         return {'poll': poll,
                 'questions_stat': questions_stat,
-                'answers_list': answers_list}
+                'answers_stat': answers_stat}
 
     def __update_database(self):
         self.poll.participants = F('participants') + 1

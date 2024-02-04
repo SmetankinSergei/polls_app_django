@@ -1,3 +1,4 @@
+from django.db import connection
 from django.db.models import F
 
 from polls.models import Question, Answer, Poll
@@ -28,15 +29,22 @@ class PollSession:
     def get_poll_statistics(self):
         self.__update_database()
 
-        poll = Poll.objects.get(pk=self.poll.pk)
-        questions = Question.objects.filter(poll=poll)
+        # poll = Poll.objects.get(pk=self.poll.pk)
+        poll = Poll.objects.raw(f"SELECT * FROM polls_poll WHERE id = {self.poll.pk}")[0]
+        print(poll, 'this is poll!!!!')
+
+        # questions = Question.objects.filter(poll=poll)
+        questions = \
+            Question.objects.raw(f'''SELECT * FROM "polls_question" WHERE "polls_question"."poll_id" = {poll.pk}''')
         questions_stat = []
         answers_stat = []
         for question in questions:
             questions_stat.append({'question': question,
                                    'percentage': self.__get_percentage(poll.participants, question.participants)})
 
-            answers = Answer.objects.filter(question=question.pk)
+            # answers = Answer.objects.filter(question=question.pk)
+            answers = \
+                Answer.objects.raw(f'''SELECT * FROM "polls_answer" WHERE "polls_answer"."question_id" = {question.pk}''')
             answer_list = []
             for answer in answers:
                 answer_list.append({'answer': answer,
@@ -48,7 +56,7 @@ class PollSession:
                 'answers_stat': answers_stat}
 
     def get_questions_numbers(self):
-        questions = Question.objects.filter(poll=self.poll).order_by('participants')
+        questions = Question.objects.filter(poll=self.poll).order_by('-participants')
         numbers = {}
         prev_question = None
         prev_number = 1
@@ -79,11 +87,11 @@ class PollSession:
         Question.objects.bulk_update(questions_to_update, ['participants'])
         Answer.objects.bulk_update(answers_to_update, ['participants'])
 
-    def __get_percentage(self, poll_participants, item_participants):
+    @staticmethod
+    def __get_percentage(poll_participants, item_participants):
         percentage = 0
         if poll_participants and item_participants:
             percentage = int((100 / poll_participants) * item_participants)
-        print(percentage, 'this is result!!!')
         return percentage
 
 

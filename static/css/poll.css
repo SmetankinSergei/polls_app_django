@@ -16,9 +16,12 @@
 }
 
 .poll-subject {
+    width: 42.5em;
+    margin: 1em auto;
     text-align: center;
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: bold;
+    color: #101010;
 }
 
 .question-block {
@@ -64,6 +67,7 @@
 .next-question-button {
     position: absolute;
     width: 10em;
-    right: 3em;
+    top: 13em;
+    right: 4.5em;
 }
 

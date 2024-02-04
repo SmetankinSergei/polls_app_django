@@ -5,6 +5,7 @@ body {
     background-position: center;
     background-attachment: fixed;
     background-size: 110%;
+    background-image: url('../img/back_min.jpg');
 }
 
 .top-correction {
@@ -114,6 +115,9 @@ body {
 }
 
 .block-border {
+    padding: 1em;
+    min-height: 3em;
     border: solid 1px #000;
     border-radius: 0.5em;
+    background-color: #707070;
 }

@@ -44,7 +44,9 @@ def poll(request):
 
     question_numbers = poll_session.session.get_questions_numbers()
 
-    print(question_numbers)
+    question_pk = -1
+    if question:
+        question_pk = question.pk
 
     context = {
         'title': 'poll',
@@ -53,7 +55,7 @@ def poll(request):
         'answers': answers,
         'message': message,
         'statistics': question_statistics,
-        'question_pk': question.pk,
+        'question_pk': question_pk,
         'question_numbers': question_numbers,
     }
 

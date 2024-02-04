@@ -1,8 +1,10 @@
 .results-title, .poll-stat {
-    margin: 1em;
+    margin: 1em auto;
+    width: 35em;
     text-align: center;
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: bold;
+    color: #101010;
 }
 
 .question-block {
@@ -11,4 +13,5 @@
     line-height: 1.5em;
     padding: 1em;
     width: 50em;
+    color: #101010;
 }

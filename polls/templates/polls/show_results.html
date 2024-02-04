@@ -10,8 +10,8 @@
     <div class="correction" style="margin-top:4em;"></div>
 
     <div class="results">
-        <div class="results-title">Completed survey statistics</div>
-        <div class="poll-stat">{{ results.poll.subject }} | {{ results.poll.participants }}</div>
+        <div class="results-title block-border">Completed survey statistics</div>
+        <div class="poll-stat block-border">{{ results.poll.subject }} | Respondents amount: {{ results.poll.participants }}</div>
 
         <div class="question-block block-border">
             {% for question_data in results.questions_stat %}

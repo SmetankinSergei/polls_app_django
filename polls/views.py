@@ -6,9 +6,16 @@ from polls.poll_session import poll_session
 
 
 def start_page(request):
-    if request.GET.get('save'):
-        poll_session.session.get_poll_statistics()
     return render(request, 'polls/start_page.html', {'title': 'start page'})
+
+
+def show_results(request):
+    results = poll_session.session.get_poll_statistics()
+    context = {
+        'title': 'results',
+        'results': results,
+    }
+    return render(request, 'polls/show_results.html', context)
 
 
 def poll(request):

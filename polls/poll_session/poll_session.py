@@ -26,6 +26,29 @@ class PollSession:
         }
 
     def get_poll_statistics(self):
+        self.__update_database()
+
+        poll = Poll.objects.get(pk=self.poll.pk)
+        questions = Question.objects.filter(poll=poll)
+        questions_stat = []
+        answers_stat = []
+        for question in questions:
+            questions_stat.append({'question': question,
+                                   'percentage': self.__get_percentage(poll.participants, question.participants)})
+
+            answers = Answer.objects.filter(question=question.pk)
+            for answer in answers:
+                answers_stat.append({'answer': answer,
+                                     'percentage': self.__get_percentage(poll.participants, answer.participants)})
+
+        # answers_list = [Answer.objects.filter(question=question.pk) for question in questions]
+
+
+        return {'poll': poll,
+                'questions_stat': questions_stat,
+                'answers_list': answers_list}
+
+    def __update_database(self):
         self.poll.participants = F('participants') + 1
 
         questions_to_update = [Question(pk=question_pk, participants=F('participants') + count)
@@ -40,9 +63,12 @@ class PollSession:
         Question.objects.bulk_update(questions_to_update, ['participants'])
         Answer.objects.bulk_update(answers_to_update, ['participants'])
 
-        return {'poll': self.poll,
-                'questions': self.questions,
-                'answers': self.answers}
+    def __get_percentage(self, poll_participants, item_participants):
+        percentage = 0
+        if poll_participants and item_participants:
+            percentage = int((100 / poll_participants) * item_participants)
+        print(percentage, 'this is result!!!')
+        return percentage
 
 
 session = None

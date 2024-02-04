@@ -34,7 +34,7 @@
                     </span>
                 </div>
             {% else %}
-                <a href="{% url 'polls:start_page' %}?save=save" class="send-results-button button">SAVE RESULTS</a>
+                <a href="{% url 'polls:show_results' %}" class="send-results-button button">SAVE RESULTS</a>
             {% endif %}
 
             <div class="answers-block">

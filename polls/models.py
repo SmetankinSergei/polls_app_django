@@ -11,7 +11,7 @@ class Poll(models.Model):
     participants = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.subject
+        return f'{self.subject}, {self.participants}'
 
 
 class Question(models.Model):

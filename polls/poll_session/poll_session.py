@@ -1,4 +1,3 @@
-from django.db import connection
 from django.db.models import F
 
 from polls.models import Question, Answer, Poll
@@ -31,7 +30,6 @@ class PollSession:
 
         # poll = Poll.objects.get(pk=self.poll.pk)
         poll = Poll.objects.raw(f"SELECT * FROM polls_poll WHERE id = {self.poll.pk}")[0]
-        print(poll, 'this is poll!!!!')
 
         # questions = Question.objects.filter(poll=poll)
         questions = \

@@ -1,0 +1,11 @@
+.greeting {
+    font-size: 2em;
+    margin: 2em;
+    font-weight: bold;
+    text-align: center;
+}
+
+a {
+    padding: 1em;
+    text-align: center;
+}

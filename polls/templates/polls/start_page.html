@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load polls_tags %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/start_page.css' %}">
+<link rel="stylesheet" href="{% static 'css/button.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="correction" style="margin-top:4em;"></div>
+
+<div class="main-content">
+    <h1 class="greeting">Welcome! Select the survey you want to take</h1>
+
+    <div class="survey-list">
+        {% get_polls_list as polls %}
+        {% for poll in polls %}
+            <a href="{% url 'polls:poll' %}?poll_pk={{poll.pk}}&is_start=True" class="poll-button button">{{ poll.subject }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
